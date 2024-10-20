@@ -1,0 +1,22 @@
+// scripts/interact.js
+const Web3 = require('web3');
+const BaseToken = require('../build/contracts/BaseToken.json');
+require('dotenv').config();
+
+const init = async () => {
+  const web3 = new Web3(new Web3.providers.HttpProvider('https://mainnet.base.org'));
+  const networkId = await web3.eth.net.getId();
+  const deployedNetwork = BaseToken.networks[networkId];
+  
+  const contract = new web3.eth.Contract(
+    BaseToken.abi,
+    deployedNetwork && deployedNetwork.address,
+  );
+
+  const accounts = await web3.eth.getAccounts();
+  const balance = await contract.methods.balanceOf(accounts[0]).call();
+  
+  console.log(`Balance of ${accounts[0]}: ${balance}`);
+};
+
+init();
